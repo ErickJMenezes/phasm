@@ -1,0 +1,23 @@
+{
+    "name": "erickjmenezes/phasm",
+    "description": "PHP to WASM",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ErickJMenezes\\Phasm\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ErickJMenezes",
+            "email": "erickmenezes.dev@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.2",
+        "nikic/php-parser": "^4.16",
+        "symfony/console": "^6.3"
+    }
+}

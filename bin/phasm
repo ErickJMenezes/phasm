@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use ErickJMenezes\Phasm\Command\PhasmCommand;
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+$phasm = new PhasmCommand();
+
+$app->add($phasm);
+
+$app->setDefaultCommand($phasm->getName(), true);
+$app->run();
