@@ -42,7 +42,7 @@ Output WAT code:
 ```
 
 Test it here:
-https://developer.mozilla.org/en-US/docs/WebAssembly/Reference/Variables/Local#syntax
+https://developer.mozilla.org/en-US/docs/WebAssembly/Reference/Variables/Local#try_it
 
 ## How to use
 To compile your source code, use this command:
