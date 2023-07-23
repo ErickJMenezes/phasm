@@ -51,11 +51,11 @@ To compile your source code, use this command:
 ```
 
 ## Supported features
-- Only int types are supported.
+- Only int (i64) and float (f64) types are supported.
 - Math `+ - * /` operations are supported
 - Variable declarations
 - Function declarations (No return value supported yet)
-- Import instructions with `#[WasmImport]` Attribute
+- Import instruction with `#[WasmImport]` Attribute
 - Start function instruction with `#[WasmStart]` Attribute
 
 ## Future
