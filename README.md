@@ -41,7 +41,7 @@ Output WAT code:
 )
 ```
 
-Test it here:
+Copy the code above and paste it here:
 https://developer.mozilla.org/en-US/docs/WebAssembly/Reference/Variables/Local#try_it
 
 ## How to use
