@@ -61,6 +61,8 @@ class WebAssemblyCompiler
             return $this->compileFunctionDeclaration($node);
         } elseif ($node instanceof Node\Expr\FuncCall) {
             return $this->compileFunctionCall($node);
+        } elseif ($node instanceof Node\Stmt\Return_) {
+            return $this->compileReturnStatement($node);
         }
         var_dump($node);
         exit(-1);
@@ -135,23 +137,31 @@ class WebAssemblyCompiler
             if (empty($param->type)) {
                 throw new RuntimeException("function param must have a type. ".$this->getNodeLine($node));
             }
-            $phpTypeName = $this->compileNode($param->type);
-            $params[] = "(param {$this->getWasmType($phpTypeName)})";
+            $paramName = "\${$param->var->name}";
+            $paramType = $this->getWasmType($param->type);
+            $this->scope->create($funcName, function () use ($paramName, $paramType) {
+                $this->scope->declare($paramName, $paramType, '');
+            });
+            $params[] = "(param $paramName $paramType)";
         }
         $params = implode(' ', $params);
+        $returnType = $node->returnType && $node->returnType->toString() !== 'void'
+            ? "(result {$this->getWasmType($node->returnType)})"
+            : '';
 
-        if ($this->isImport($node, "(func $funcName $params)")) {
+        if ($this->isImport($node, "(func $funcName $params $returnType)")) {
             return '';
         }
 
         $this->setStartIfApplicable($node);
+        $export = $this->isExportable($node, $funcName);
 
         $funcBody = $this->scope->create($funcName, function () use ($node) {
             $body = $this->compileNodes($node->stmts);
             return "{$this->scope->getDeclarations()} {$body}";
         });
 
-        return "(func $funcName $params $funcBody)";
+        return "(func $funcName $export $params $returnType $funcBody)";
     }
 
     private function getNodeLine(Node $node): string
@@ -159,10 +169,15 @@ class WebAssemblyCompiler
         return "[{$node->getLine()}:{$node->getStartTokenPos()}-{$node->getEndTokenPos()}]";
     }
 
-    private function getWasmType(string $type): string
+    private function getWasmType(?\Stringable $type): string
     {
-        return match ($type) {
-            'int' => 'i64'
+        return match ((string) $type) {
+            'int', 'i64' => 'i64',
+            'float', 'f64' => 'f64',
+            'i32' => 'i32',
+            'f32' => 'f32',
+            'void' => '',
+            null => throw new RuntimeException("All parameters must have a type.")
         };
     }
 
@@ -172,14 +187,9 @@ class WebAssemblyCompiler
             foreach ($attrGroup->attrs as $attr) {
                 if ($attr->name->toString() === 'WasmImport') {
                     $arg = $attr->args[0]->value;
-                    $pathName = $attr->args[0] instanceof Node\Scalar\String_
-                        /** @var $arg \PhpParser\Node\Scalar\String_ */
-                        ? "\"{$arg->value}\""
-
-                        /** @var $arg \PhpParser\Node\Expr\Array_ */
-                        : array_reduce($arg->items, function (string $prev, Node\Expr\ArrayItem $item) {
-                            return "$prev \"{$item->value->value}\"";
-                        }, "");
+                    $pathName = array_reduce($arg->items, function (string $prev, Node\Expr\ArrayItem $item) {
+                        return "$prev \"{$item->value->value}\"";
+                    }, "");
                     $pathName = ltrim($pathName);
                     $this->imports[] = "(import $pathName $signature)";
                     return true;
@@ -201,6 +211,19 @@ class WebAssemblyCompiler
         }
     }
 
+    private function isExportable(Node\Stmt\Function_ $node, string $functionName): string
+    {
+        foreach ($node->attrGroups as $attrGroup) {
+            foreach ($attrGroup->attrs as $attr) {
+                if ($attr->name->toString() === 'WasmExport') {
+                    $exportName = ltrim($functionName, '$');
+                    return "(export \"$exportName\")";
+                }
+            }
+        }
+        return '';
+    }
+
     /**
      * @param \PhpParser\Node\Expr\FuncCall $node
      *
@@ -219,4 +242,19 @@ class WebAssemblyCompiler
         $stack = implode(' ', $stack);
         return "$stack (call $funcName)";
     }
+
+    /**
+     * @param \PhpParser\Node\Stmt\Return_ $node
+     *
+     * @return string
+     * @author ErickJMenezes <erickmenezes.dev@gmail.com>
+     */
+    private function compileReturnStatement(Node\Stmt\Return_ $node): string
+    {
+        if (is_null($node->expr)) {
+            return '';
+        }
+        $expr = $this->compileNode($node->expr);
+        return "(return $expr)";
+}
 }

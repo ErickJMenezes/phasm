@@ -57,9 +57,16 @@ To compile your source code, use this command:
 - Function declarations (No return value supported yet)
 - Import instruction with `#[WasmImport]` Attribute
 - Start function instruction with `#[WasmStart]` Attribute
-
-## Future
 - Export functions `(export "foo1")`
 - Support function return types `(result i32)`
-- Support strings
 - Support function parameters
+
+## Future
+- Boolean expressions
+- Strings
+- For loops
+- While loops
+- if, else if, and else statements
+- class with properties (simple struct)
+- class with methods (enhanced structs)
+- inheritance

@@ -18,7 +18,7 @@ class Scope
     private string $currentScope = self::GLOBAL_SCOPE;
     private string $previousScope = self::GLOBAL_SCOPE;
 
-    public function create(string $name, Closure $callback): string
+    public function create(string $name, Closure $callback): ?string
     {
         $name = $name === self::GLOBAL_SCOPE ? $name : md5($name);
         $this->previousScope = $this->currentScope;
