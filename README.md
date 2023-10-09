@@ -2,7 +2,7 @@
 
 A PHP to WebAssembly WAT compiler.
 
-This is for demonstration purposes only. Only a small subset of php is supported. Also, there are no optimizations.
+This is for demonstration purposes only. Only a small subset of php is supported.
 
 ## Example
 
