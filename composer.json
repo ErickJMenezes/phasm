@@ -19,5 +19,13 @@
         "php": "^8.2",
         "nikic/php-parser": "^4.16",
         "symfony/console": "^6.3"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.9"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

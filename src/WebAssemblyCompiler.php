@@ -232,15 +232,15 @@ class WebAssemblyCompiler
      */
     private function compileFunctionCall(Node\Expr\FuncCall $node): string
     {
-        $stack = [];
+        $params = [];
         $funcName = "\${$node->name->toString()}";
 
         foreach ($node->args as $arg) {
-            $stack[] = $this->compileNode($arg->value);
+            $params[] = $this->compileNode($arg->value);
         }
 
-        $stack = implode(' ', $stack);
-        return "$stack (call $funcName)";
+        $params = implode(' ', $params);
+        return "(call $funcName $params)";
     }
 
     /**
@@ -256,5 +256,5 @@ class WebAssemblyCompiler
         }
         $expr = $this->compileNode($node->expr);
         return "(return $expr)";
-}
+    }
 }

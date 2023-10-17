@@ -1,0 +1,1 @@
+(module (import "console" "log" (func $logValue (param $value i64) ))  (func $sum (export "sum") (param $a i64) (param $b i64) (result i64)   (local $c i64) (local.set $c (i64.add (local.get $a) (local.get $b))) (return (local.get $c))) (func $main     (call $logValue (call $sum (i64.const 1) (i64.const 2)))) (start $main))
