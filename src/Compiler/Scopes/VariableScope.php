@@ -1,10 +1,10 @@
 <?php
 
-namespace ErickJMenezes\Phasm;
+namespace ErickJMenezes\Phasm\Compiler\Scopes;
 
 use Closure;
 
-class Scope
+class VariableScope
 {
     private const GLOBAL_SCOPE = '__global__';
 
@@ -66,5 +66,10 @@ class Scope
         }
 
         return $this->scopes[$this->currentScope][$name]['type'];
+    }
+
+    public function getTypeFromNamespace(string $namespace, string $name): string
+    {
+        return $this->create($namespace, fn () => $this->getType($name));
     }
 }

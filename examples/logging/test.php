@@ -1,5 +1,9 @@
 <?php
 
+use Wasm\Core\WasmExport;
+use Wasm\Core\WasmImport;
+use Wasm\Core\WasmStart;
+
 #[WasmImport(['console', 'log'])]
 function logValue(int $value): void {}
 

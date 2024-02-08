@@ -2,10 +2,7 @@
 
 namespace ErickJMenezes\Phasm\Command;
 
-use ErickJMenezes\Phasm\Scope;
-use ErickJMenezes\Phasm\WebAssemblyCompiler;
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
+use ErickJMenezes\Phasm\Compiler\WebAssemblyCompiler;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,7 +32,7 @@ class PhasmCommand extends Command
 
         $code = file_get_contents($input->getArgument('file'));
 
-        $compiler = new WebAssemblyCompiler(new Scope());
+        $compiler = new WebAssemblyCompiler();
 
         $watCode = $compiler->compileRoot($code);
 
